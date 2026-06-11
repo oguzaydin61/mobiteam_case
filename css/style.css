@@ -1,0 +1,63 @@
+.mobivents-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 24px;
+    margin: 20px 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+.mobivents-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.mobivents-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+.mobivents-thumb img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    display: block;
+}
+
+.mobivents-content {
+    padding: 20px;
+}
+
+.mobivents-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #1a202c;
+    margin: 0 0 12px 0;
+}
+
+.mobivents-meta {
+    font-size: 0.9rem;
+    color: #4a5568;
+    margin-bottom: 12px;
+    line-height: 1.5;
+}
+
+.mobivents-meta p {
+    margin: 4px 0;
+}
+
+.mobivents-excerpt {
+    font-size: 0.875rem;
+    color: #718096;
+    line-height: 1.6;
+}
+
+.mobivents-no-events {
+    text-align: center;
+    color: #718096;
+    padding: 4px;
+    font-style: italic;
+}
