@@ -1,21 +1,11 @@
 <?php
-/**
- * Plugin Name: Mobivents - Custom Event Manager
- * Description: A lightweight, secure, and multilingual custom event management plugin developed for professional agency standards.
- * Version:     1.0.0
- * Author:      Oguzhan Aydin
- * Text Domain: mobivents
- * Domain Path: /languages
- * License:     GPL2
- */
 
-// Eğer dosyaya doğrudan erişilmeye çalışılırsa güvenliği sağla
 if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
 /**
- * Class MobiVents_Manager
+
  * Handles the initialization of Custom Post Types, Meta Boxes, Shortcodes, and REST API.
  */
 class MobiVents_Manager {
@@ -26,30 +16,25 @@ class MobiVents_Manager {
         add_action( 'init', array( $this, 'register_event_taxonomy' ) );
         add_action( 'init', array( $this, 'load_textdomain' ) );
         
-        // Scripts and Styles
+        
         add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_frontend_styles' ) );
 
-        // Meta Box Hooks
         add_action( 'add_meta_boxes', array( $this, 'add_event_meta_boxes' ) );
         add_action( 'save_post', array( $this, 'save_event_meta_data' ) );
 
-        // Shortcode Hook
         add_shortcode( 'mobivents_list', array( $this, 'render_events_shortcode' ) );
 
-        // REST API Hook
         add_action( 'rest_api_init', array( $this, 'register_events_api_route' ) );
     }
 
     /**
-     * Load translation files for multilingual support.
+     * multilingual support.
      */
     public function load_textdomain() {
         load_plugin_textdomain( 'mobivents', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
     }
 
-    /**
-     * Registers the Custom Post Type for Events.
-     */
+    
     public function register_event_post_type() {
         $labels = array(
             'name'               => _x( 'Events', 'post type general name', 'mobivents' ),
@@ -67,16 +52,14 @@ class MobiVents_Manager {
             'public'             => true,
             'has_archive'        => true,
             'supports'           => array( 'title', 'editor', 'thumbnail' ),
-            'show_in_rest'       => true, // Gutenberg ve REST API desteği için kritik
+            'show_in_rest'       => true,
             'menu_icon'          => 'dashicons-calendar-alt',
         );
 
         register_post_type( 'mobivents', $args );
     }
 
-    /**
-     * Registers Custom Taxonomy (Event Types like Webinar, Conference).
-     */
+    
     public function register_event_taxonomy() {
         $labels = array(
             'name'              => _x( 'Event Types', 'taxonomy general name', 'mobivents' ),
@@ -98,16 +81,12 @@ class MobiVents_Manager {
         register_taxonomy( 'event_type', array( 'mobivents' ), $args );
     }
 
-    /**
-     * Enqueue CSS styles for frontend.
-     */
+    
     public function enqueue_frontend_styles() {
         wp_enqueue_style( 'mobivents-style', plugin_dir_url( __FILE__ ) . 'css/style.css', array(), '1.0.0' );
     }
 
-    /**
-     * Adds custom metabox for Event specifications.
-     */
+    
     public function add_event_meta_boxes() {
         add_meta_box(
             'mobivents_details',
@@ -119,11 +98,9 @@ class MobiVents_Manager {
         );
     }
 
-    /**
-     * Renders the Meta Box fields in admin dashboard.
-     */
+    
     public function render_meta_box_html( $post ) {
-        // CSRF Güvenliği için Nonce alanı (Ajanslar buna çok dikkat eder)
+        // CSRF
         wp_nonce_field( 'mobivents_save_meta', 'mobivents_meta_nonce' );
 
         $date     = get_post_meta( $post->ID, '_event_date', true );
@@ -140,26 +117,24 @@ class MobiVents_Manager {
         echo '<input type="number" id="event_price" name="event_price" step="0.01" value="' . esc_attr( $price ) . '" class="widefat" /></p>';
     }
 
-    /**
-     * Saves and sanitizes the meta box data securely.
-     */
+   
     public function save_event_meta_data( $post_id ) {
-        // Nonce doğrulama
+        
         if ( ! isset( $_POST['mobivents_meta_nonce'] ) || ! wp_verify_nonce( $_POST['mobivents_meta_nonce'], 'mobivents_save_meta' ) ) {
             return;
         }
 
-        // Autosave durumunu kontrol et
+        
         if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
             return;
         }
 
-        // Kullanıcı yetki kontrolü
+        
         if ( ! current_user_can( 'edit_post', $post_id ) ) {
             return;
         }
 
-        // Verileri temizle (Sanitisation) ve kaydet
+        
         if ( isset( $_POST['event_date'] ) ) {
             update_post_meta( $post_id, '_event_date', sanitize_text_field( $_POST['event_date'] ) );
         }
@@ -171,10 +146,7 @@ class MobiVents_Manager {
         }
     }
 
-    /**
-     * Frontend shortcode to list events in a grid layout.
-     * Usage: [mobivents_list]
-     */
+    
     public function render_events_shortcode() {
         $args = array(
             'post_type'      => 'mobivents',
@@ -241,9 +213,7 @@ class MobiVents_Manager {
         ) );
     }
 
-    /**
-     * API Callback logic to return JSON.
-     */
+    
     public function get_upcoming_events_api() {
         $args = array(
             'post_type'      => 'mobivents',
@@ -275,5 +245,5 @@ class MobiVents_Manager {
     }
 }
 
-// Instantiate the class to fire up the plugin
+
 new MobiVents_Manager();
